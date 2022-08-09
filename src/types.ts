@@ -9,12 +9,12 @@ export type DevicePixelRatio =
     | 2
     | 2.5
     | 3
-    // | 3.5
-    // | 4
-    // | 4.5
-    // | 5
+    | 3.5
+    | 4
+    | 4.5
+    | 5
 
-export type VariableQualities = Record<DevicePixelRatio, number>
+export type VariableQualities = { [key in DevicePixelRatio]?: number }
 
 export interface SrcSetOptions {
     widths?: number[]
@@ -30,9 +30,6 @@ export interface SrcSetOptions {
 // see 'https://docs.imgix.com/apis/rendering'
 // see 'https://github.com/imgix/imgix-url-params/blob/master/dist/parameters.js'
 
-// Base64のやつがない
-
-// ↓ expires?? 忘れてる??
 interface AdjustmentParams {
     bri?: number
     con?: number
@@ -50,12 +47,13 @@ interface AdjustmentParams {
 }
 
 interface AutomaticParams {
-    auto?: string  // 'compress' | 'enhance' | 'format'
+    auto?: string | Array<'compress' | 'enhance' | 'format' | 'redeye'>
 }
 
 interface BlendingParams {
     blend?: string
-    'blend-align'?: string  // 'top' | 'middle' | 'bottom' | 'left' | 'center' | 'right'
+    blend64?: string
+    'blend-align'?: string | Array<'top' | 'middle' | 'bottom' | 'left' | 'center' | 'right'>
     'blend-alpha'?: number
     'blend-color'?: string  // hex value
     'blend-crop'?: 'top' | 'bottom' | 'left' | 'right' | 'faces'
@@ -105,6 +103,10 @@ interface ColorPaletteParams {
     colors?: number
     palette?: 'css' | 'json'
     prefix?: string
+}
+
+interface ExpirationParams {
+    expires?: number  // timestamp
 }
 
 interface FaceDetectionParams {
@@ -207,11 +209,13 @@ interface StylizeParams {
 
 interface TextParams {
     txt?: string
-    'txt-align'?: string  // 'top' | 'middle' | 'bottom' | 'left' | 'center' | 'right'
-    'txt-clip'?: string  // 'start' | 'middle' | 'end' | 'ellipsis'
+    txt64?: string
+    'txt-align'?: string | Array<'top' | 'middle' | 'bottom' | 'left' | 'center' | 'right'>
+    'txt-clip'?: string | Array<'start' | 'middle' | 'end' | 'ellipsis'>
     'txt-color'?: string  // hex
     'txt-fit'?: 'max'
     'txt-font'?: string
+    'txt-font64'?: string
     'txt-lig'?: 0 | 1 | 2
     'txt-line-color'?: string  // hex
     'txt-line'?: number
@@ -240,7 +244,8 @@ interface TypesettingEndpointParams {
 
 interface WatermarkParams {
     mark?: string  // url
-    'mark-align'?: string  // 'top' | 'middle' | 'bottom' | 'left' | 'center' | 'right'
+    mark64?: string
+    'mark-align'?: string | Array<'top' | 'middle' | 'bottom' | 'left' | 'center' | 'right'>
     'mark-alpha'?: number  // 0 ~ 100
     'mark-base'?: string  // url
     'mark-fit'?: 'clamp' | 'clip' | 'crop' | 'max' | 'scale'  // default: 'clip'
@@ -260,6 +265,7 @@ export type ImgixParams =
     BlendingParams &
     BorderAndPaddingParams &
     ColorPaletteParams &
+    ExpirationParams &
     FaceDetectionParams &
     FillParams &
     FocalPointCropParams &

@@ -4,10 +4,10 @@ import {
     DEFAULT_DPR_QUALITIES
 } from './constants'
 import {
-    extractUrl,
     getSrcSetWidths,
     sanitizeIsVariableQuality,
-    sanitizePath
+    sanitizePath,
+    sanitizeUrl
 } from './utils'
 import {
     validateDevicePixelRatios,
@@ -22,29 +22,25 @@ import type {
 export const buildUrl = (
     imgixUrl: ClientOptions['imgixUrl'],
     imgPath: string,
-    imgixParams: ImgixParams,
-    isPathEncoding: boolean
+    imgixParams?: ImgixParams,
+    isPathEncoding?: boolean
 ) => {
-    const { protocol, host, pathname } = extractUrl(imgixUrl)
-
-    if (!protocol || !host) {
-        throw new Error('buildURL: URL must match {protocol}//{host}{pathname}')
-    }
-
+    const url = sanitizeUrl(imgixUrl)
     const path = sanitizePath(imgPath, isPathEncoding)
     const params = buildParams(imgixParams)
 
-    return `${protocol}//${host}${pathname}${path}${params}`
+    return `${url}${path}${params}`
 }
 
 export const buildSrcSet = (
     imgixUrl: ClientOptions['imgixUrl'],
     imgPath: string,
-    imgixParams: ImgixParams,
-    srcSetOptions: SrcSetOptions,
-    isPathEncoding: boolean
+    imgixParams?: ImgixParams,
+    srcSetOptions?: SrcSetOptions,
+    isPathEncoding?: boolean
 ) => {
-    const { w, h } = imgixParams
+    const w = imgixParams?.w
+    const h = imgixParams?.h
 
     if (w || h) {
         return buildSrcSetDpr(
@@ -54,23 +50,23 @@ export const buildSrcSet = (
             srcSetOptions,
             isPathEncoding
         )
-    } else {
-        return buildSrcSetPairs(
-            imgixUrl,
-            imgPath,
-            imgixParams,
-            srcSetOptions,
-            isPathEncoding
-        )
     }
+
+    return buildSrcSetPairs(
+        imgixUrl,
+        imgPath,
+        imgixParams,
+        srcSetOptions,
+        isPathEncoding
+    )
 }
 
 export const buildUrlObject = (
     imgixUrl: ClientOptions['imgixUrl'],
     imgPath: string,
-    imgixParams: ImgixParams,
-    srcSetOptions: SrcSetOptions,
-    isPathEncoding: boolean
+    imgixParams?: ImgixParams,
+    srcSetOptions?: SrcSetOptions,
+    isPathEncoding?: boolean
 ) => {
     const src = buildUrl(
         imgixUrl,
@@ -93,30 +89,42 @@ export const buildUrlObject = (
     }
 }
 
-export const buildParams = (imgixParams: ImgixParams) => {
-    const queryParams: string[] = []
+export const buildParams = (imgixParams: ImgixParams | undefined) => {
+    if (imgixParams) {
+        const queryParams: string[] = []
 
-    for (const key of Object.keys(imgixParams)) {
-        if (imgixParams[key]) {
-            const encodedKey = encodeURIComponent(key)
-            const encodedValue =
-                key.slice(-2) === '64'
-                    ? Base64.encodeURI(imgixParams[key])
-                    : encodeURIComponent(imgixParams[key])
+        for (const key of Object.keys(imgixParams)) {
+            if (imgixParams[key]) {
+                const arrayToString = (value: string | string[] | number | number[]) => {
+                    if (Array.isArray(value)) {
+                        return value.join(',')
+                    }
 
-            queryParams.push(`${encodedKey}=${encodedValue}`)
+                    return value.toString()
+                }
+
+                const encodedKey = encodeURIComponent(key)
+                const encodedValue =
+                    key.slice(-2) === '64'
+                        ? Base64.encodeURI(arrayToString(imgixParams[key]))
+                        : encodeURIComponent(arrayToString(imgixParams[key]))
+
+                queryParams.push(`${encodedKey}=${encodedValue}`)
+            }
         }
+
+        return `${queryParams.length > 0 ? '?' : ''}${queryParams.join('&')}`
     }
 
-    return `${queryParams.length > 0 ? '?' : ''}${queryParams.join('&')}`
+    return ''
 }
 
 export const buildSrcSetPairs = (
     imgixUrl: ClientOptions['imgixUrl'],
     imgPath: string,
-    imgixParams: ImgixParams,
-    srcSetOptions: SrcSetOptions,
-    isPathEncoding: boolean
+    imgixParams?: ImgixParams,
+    srcSetOptions?: SrcSetOptions,
+    isPathEncoding?: boolean
 ) => {
     const srcSetWidths = getSrcSetWidths(srcSetOptions)
 
@@ -135,20 +143,20 @@ export const buildSrcSetPairs = (
 export const buildSrcSetDpr = (
     imgixUrl: ClientOptions['imgixUrl'],
     imgPath: string,
-    imgixParams: ImgixParams,
-    srcSetOptions: SrcSetOptions,
-    isPathEncoding: boolean
+    imgixParams?: ImgixParams,
+    srcSetOptions?: SrcSetOptions,
+    isPathEncoding?: boolean
 ) => {
-    const targetRatios = srcSetOptions.devicePixelRatios ?? DEFAULT_DPRS
+    const targetRatios = srcSetOptions?.devicePixelRatios ?? DEFAULT_DPRS
     validateDevicePixelRatios(targetRatios)
 
-    const isVariableQuality = sanitizeIsVariableQuality(srcSetOptions.isVariableQuality)
+    const isVariableQuality = sanitizeIsVariableQuality(srcSetOptions?.isVariableQuality)
 
-    if (srcSetOptions.variableQualities) {
+    if (srcSetOptions?.variableQualities) {
         validateVariableQualities(srcSetOptions.variableQualities)
     }
 
-    const qualities = { ...DEFAULT_DPR_QUALITIES, ...srcSetOptions.variableQualities }
+    const qualities = { ...DEFAULT_DPR_QUALITIES, ...srcSetOptions?.variableQualities }
 
     const srcset = targetRatios.map((dpr) =>
         `${buildUrl(

@@ -1,4 +1,9 @@
-import { parseURL, withoutTrailingSlash } from 'ufo'
+import {
+    parseURL,
+    withoutTrailingSlash,
+    withLeadingSlash,
+    withoutLeadingSlash
+} from 'ufo'
 import {
     DEFAULT_MIN_SRCSET_WIDTH,
     DEFAULT_MAX_SRCSET_WIDTH,
@@ -15,37 +20,6 @@ import type {
     ClientOptions,
     SrcSetOptions
 } from './types'
-
-export const extractUrl = (url: ClientOptions['imgixUrl']) => {
-    return parseURL(withoutTrailingSlash(url))
-}
-
-export const sanitizeIsVariableQuality = (isVariableQuality: SrcSetOptions['isVariableQuality']) => {
-    if (isVariableQuality && typeof isVariableQuality === 'boolean') {
-        return isVariableQuality
-    }
-
-    return DEFAULT_IS_VARIABLE_QUALITY
-}
-
-export const sanitizePath = (path: string, isPathEncoding: boolean) => {
-    // Strip leading slash first (we'll re-add after encoding)
-    let _path = path.replace(/^\//, '')
-
-    if (isPathEncoding) {
-        if (/^https?:\/\//.test(_path)) {
-            // Use de/encodeURIComponent to ensure *all* characters are handled,
-            // since it's being used as a path
-            _path = encodeURIComponent(_path)
-        } else {
-            // Use de/encodeURI if we think the path is just a path,
-            // so it leaves legal characters like '/' and '@' alone
-            _path = encodeURI(_path).replace(/[#?:+]/g, encodeURIComponent)
-        }
-    }
-
-    return '/' + _path
-}
 
 const genResolutions = (
     minWidth = DEFAULT_MIN_SRCSET_WIDTH,
@@ -83,8 +57,8 @@ const genResolutions = (
     return resolutions
 }
 
-export const getSrcSetWidths = (srcSetOptions: SrcSetOptions) => {
-    if (srcSetOptions.widths) {
+export const getSrcSetWidths = (srcSetOptions: SrcSetOptions | undefined) => {
+    if (srcSetOptions?.widths) {
         validateWidths(srcSetOptions.widths)
 
         return srcSetOptions.widths
@@ -94,4 +68,40 @@ export const getSrcSetWidths = (srcSetOptions: SrcSetOptions) => {
         validateAndDestructureOptions(srcSetOptions)
 
     return genResolutions(minWidth, maxWidth, widthTolerance)
+}
+
+export const sanitizeIsVariableQuality = (isVariableQuality: SrcSetOptions['isVariableQuality']) => {
+    if (isVariableQuality && typeof isVariableQuality === 'boolean') {
+        return isVariableQuality
+    }
+
+    return DEFAULT_IS_VARIABLE_QUALITY
+}
+
+export const sanitizePath = (path: string, isPathEncoding: boolean | undefined) => {
+    const sanitizedPath = withoutLeadingSlash(path)
+
+    if (isPathEncoding) {
+        if (/^https?:\/\//.test(sanitizedPath)) {
+            // Use de/encodeURIComponent to ensure *all* characters are handled,
+            // since it's being used as a path
+            return withLeadingSlash(encodeURIComponent(sanitizedPath))
+        } else {
+            // Use de/encodeURI if we think the path is just a path,
+            // so it leaves legal characters like '/' and '@' alone
+            return withLeadingSlash(encodeURI(sanitizedPath).replace(/[#?:+]/g, encodeURIComponent))
+        }
+    }
+
+    return withLeadingSlash(sanitizedPath)
+}
+
+export const sanitizeUrl = (url: ClientOptions['imgixUrl']) => {
+    const { protocol, host, pathname } = parseURL(withoutTrailingSlash(url))
+
+    if (!protocol || !host) {
+        throw new Error('buildURL: URL must match "https?://{host}/{path}"')
+    }
+
+    return `${protocol}//${host}${pathname}`
 }
