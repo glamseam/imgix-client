@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "lib": [
+            "esnext",
+            "dom",
+            "dom.iterable"
+        ],
+        "moduleResolution": "node",
+        "noErrorTruncation": true,
+        "removeComments": true,
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "sourceMap": false,
+        "strict": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "target": "es2017"
+    },
+    "exclude": [
+        "dist",
+        "node_modules"
+    ]
+}

@@ -1,0 +1,47 @@
+{
+    "name": "@d-gs/imgix-client",
+    "version": "0.0.1",
+    "description": "",
+    "type": "module",
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "require": "./dist/index.cjs",
+            "import": "./dist/index.mjs",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "author": "__d",
+    "license": "MIT",
+    "keywords": [
+        "imgix"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/glamseam/imgix-client.git"
+    },
+    "bugs": {
+        "url": "https://github.com/glamseam/imgix-client/issues"
+    },
+    "scripts": {
+        "build": "unbuild",
+        "pub": "pnpm build && pnpm publish --access=public",
+        "lint": "eslint src -c .eslintrc.json --ext ts",
+        "lint:fix": "eslint --fix src -c .eslintrc.json --ext ts"
+    },
+    "devDependencies": {
+        "@d-gs/eslint-config": "^0.1.12",
+        "eslint": "^8.21.0",
+        "typescript": "^4.7.4",
+        "unbuild": "^0.7.6"
+    },
+    "dependencies": {
+        "js-base64": "^3.7.2",
+        "ufo": "^0.8.5"
+    }
+}
