@@ -5,10 +5,10 @@ import {
 } from './constants'
 
 import {
-    SrcSetOptions
+    SrcsetOptions
 } from './types'
 
-export const validateAndDestructureOptions = (options: SrcSetOptions | undefined) => {
+export const validateAndDestructureOptions = (options: SrcsetOptions | undefined) => {
     const widthTolerance = options?.widthTolerance ?? DEFAULT_SRCSET_WIDTH_TOLERANCE
     validateWidthTolerance(widthTolerance)
 
@@ -24,7 +24,7 @@ export const validateAndDestructureOptions = (options: SrcSetOptions | undefined
 }
 
 export const validateDevicePixelRatios = (
-    devicePixelRatios: SrcSetOptions['devicePixelRatios']
+    devicePixelRatios: SrcsetOptions['devicePixelRatios']
 ) => {
     if (!Array.isArray(devicePixelRatios) || !devicePixelRatios.length) {
         throw new Error(
@@ -56,13 +56,13 @@ export const validateRange = (min: string | number, max: string | number) => {
     }
 }
 
-export const validateVariableQualities = (variableQualities: SrcSetOptions['variableQualities']) => {
+export const validateVariableQualities = (variableQualities: SrcsetOptions['variableQualities']) => {
     if (typeof variableQualities !== 'object') {
         throw new Error('The variableQualities argument can only be an object')
     }
 }
 
-export const validateWidths = (customWidths: NonNullable<SrcSetOptions['widths']>) => {
+export const validateWidths = (customWidths: NonNullable<SrcsetOptions['widths']>) => {
     if (!Array.isArray(customWidths) || !customWidths.length) {
         throw new Error(
             'The widths argument can only be passed a valid non-empty array of integers'
@@ -81,7 +81,7 @@ export const validateWidths = (customWidths: NonNullable<SrcSetOptions['widths']
 }
 
 export const validateWidthTolerance = (
-    widthTolerance: NonNullable<SrcSetOptions['widthTolerance']>
+    widthTolerance: NonNullable<SrcsetOptions['widthTolerance']>
 ) => {
     if (typeof widthTolerance !== 'number' || widthTolerance < 0.01) {
         throw new Error(

@@ -16,7 +16,7 @@ export type DevicePixelRatio =
 
 export type VariableQualities = { [key in DevicePixelRatio]?: number }
 
-export interface SrcSetOptions {
+export interface SrcsetOptions {
     widths?: number[]
     widthTolerance?: number  // 0 ~ 1
     minWidth?: number

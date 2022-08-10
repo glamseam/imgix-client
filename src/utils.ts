@@ -18,7 +18,7 @@ import {
 } from './validators'
 import type {
     ClientOptions,
-    SrcSetOptions
+    SrcsetOptions
 } from './types'
 
 const genResolutions = (
@@ -57,20 +57,20 @@ const genResolutions = (
     return resolutions
 }
 
-export const getSrcSetWidths = (srcSetOptions: SrcSetOptions | undefined) => {
-    if (srcSetOptions?.widths) {
-        validateWidths(srcSetOptions.widths)
+export const getSrcsetWidths = (srcsetOptions: SrcsetOptions | undefined) => {
+    if (srcsetOptions?.widths) {
+        validateWidths(srcsetOptions.widths)
 
-        return srcSetOptions.widths
+        return srcsetOptions.widths
     }
 
     const { widthTolerance, minWidth, maxWidth } =
-        validateAndDestructureOptions(srcSetOptions)
+        validateAndDestructureOptions(srcsetOptions)
 
     return genResolutions(minWidth, maxWidth, widthTolerance)
 }
 
-export const sanitizeIsVariableQuality = (isVariableQuality: SrcSetOptions['isVariableQuality']) => {
+export const sanitizeIsVariableQuality = (isVariableQuality: SrcsetOptions['isVariableQuality']) => {
     if (isVariableQuality && typeof isVariableQuality === 'boolean') {
         return isVariableQuality
     }
