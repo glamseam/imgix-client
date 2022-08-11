@@ -1,4 +1,4 @@
-import { Md5 } from 'ts-md5'
+import { Md5 } from '@d-gs/md5'
 import {
     parseURL,
     withoutTrailingSlash,
@@ -110,7 +110,8 @@ export const sanitizeUrl = (url: Client['url']) => {
 export const signParams = (token: string | undefined, path: string, queryParams: string) => {
     if (token) {
         const signatureBase = token + path + queryParams
-        const signature = Md5.hashStr(signatureBase)
+        const md5 = new Md5()
+        const signature = md5.appendStr(signatureBase).end()
 
         return `${queryParams.length > 0 ? '&s=' : '?s=' }${signature}`
     }
