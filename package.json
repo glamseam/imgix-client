@@ -1,6 +1,6 @@
 {
     "name": "@d-gs/imgix-client",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "description": "",
     "type": "module",
     "main": "./dist/index.cjs",
@@ -41,8 +41,8 @@
         "unbuild": "^0.8.7"
     },
     "dependencies": {
+        "@d-gs/md5": "^1.0.0",
         "js-base64": "^3.7.2",
-        "ts-md5": "^1.2.11",
         "ufo": "^0.8.5"
     }
 }
