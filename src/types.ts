@@ -184,6 +184,10 @@ interface RotationParams {
     rot?: number  // 0 ~ 359
 }
 
+interface SecureParams {
+    s?: string
+}
+
 interface SizeParams {
     ar?: string  // w:h
     crop?: 'top' | 'bottom' | 'left' | 'right' | 'faces' | 'focalpoint' | 'edges' | 'entropy'
@@ -275,6 +279,7 @@ export type ImgixParams =
     PDFParams &
     PixelDensityParams &
     RotationParams &
+    SecureParams &
     SizeParams &
     StylizeParams &
     TextParams &
