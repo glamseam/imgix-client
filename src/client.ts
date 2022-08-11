@@ -7,33 +7,35 @@ import {
     getSrcsetWidths,
     sanitizeIsVariableQuality,
     sanitizePath,
-    sanitizeUrl
+    sanitizeUrl,
+    signParams
 } from './utils'
 import {
     validateDevicePixelRatios,
     validateVariableQualities
 } from './validators'
 import type {
-    ClientOptions,
+    Client,
     ImgixParams,
     SrcsetOptions
 } from './types'
 
 export const buildUrl = (
-    imgixUrl: ClientOptions['imgixUrl'],
+    client: Client,
     imgPath: string,
     imgixParams?: ImgixParams,
     isPathEncoding?: boolean
 ) => {
-    const url = sanitizeUrl(imgixUrl)
+    const url = sanitizeUrl(client.url)
     const path = sanitizePath(imgPath, isPathEncoding)
     const params = buildParams(imgixParams)
+    const signedParams = signParams(client.secureUrlToken, path, params)
 
-    return `${url}${path}${params}`
+    return `${url}${path}${params}${signedParams}`
 }
 
 export const buildSrcset = (
-    imgixUrl: ClientOptions['imgixUrl'],
+    client: Client,
     imgPath: string,
     imgixParams?: ImgixParams,
     srcsetOptions?: SrcsetOptions,
@@ -44,7 +46,7 @@ export const buildSrcset = (
 
     if (w || h) {
         return buildSrcsetDpr(
-            imgixUrl,
+            client,
             imgPath,
             imgixParams,
             srcsetOptions,
@@ -53,7 +55,7 @@ export const buildSrcset = (
     }
 
     return buildSrcsetPairs(
-        imgixUrl,
+        client,
         imgPath,
         imgixParams,
         srcsetOptions,
@@ -62,21 +64,21 @@ export const buildSrcset = (
 }
 
 export const buildUrlObject = (
-    imgixUrl: ClientOptions['imgixUrl'],
+    client: Client,
     imgPath: string,
     imgixParams?: ImgixParams,
     srcsetOptions?: SrcsetOptions,
     isPathEncoding?: boolean
 ) => {
     const src = buildUrl(
-        imgixUrl,
+        client,
         imgPath,
         imgixParams,
         isPathEncoding
     )
 
     const srcset = buildSrcset(
-        imgixUrl,
+        client,
         imgPath,
         imgixParams,
         srcsetOptions,
@@ -120,7 +122,7 @@ export const buildParams = (imgixParams: ImgixParams | undefined) => {
 }
 
 export const buildSrcsetPairs = (
-    imgixUrl: ClientOptions['imgixUrl'],
+    client: Client,
     imgPath: string,
     imgixParams?: ImgixParams,
     srcsetOptions?: SrcsetOptions,
@@ -130,7 +132,7 @@ export const buildSrcsetPairs = (
 
     const srcset = srcsetWidths.map((w) =>
         `${buildUrl(
-            imgixUrl,
+            client,
             imgPath,
             { ...imgixParams, w },
             isPathEncoding
@@ -141,7 +143,7 @@ export const buildSrcsetPairs = (
 }
 
 export const buildSrcsetDpr = (
-    imgixUrl: ClientOptions['imgixUrl'],
+    client: Client,
     imgPath: string,
     imgixParams?: ImgixParams,
     srcsetOptions?: SrcsetOptions,
@@ -160,7 +162,7 @@ export const buildSrcsetDpr = (
 
     const srcset = targetRatios.map((dpr) =>
         `${buildUrl(
-            imgixUrl,
+            client,
             imgPath,
             {
                 dpr,

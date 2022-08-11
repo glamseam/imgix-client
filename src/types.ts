@@ -1,6 +1,6 @@
-export interface ClientOptions {
-    imgixUrl: string
-    secureURLToken?: string
+export interface Client {
+    url: string
+    secureUrlToken?: string
 }
 
 export type DevicePixelRatio =

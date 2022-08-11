@@ -1,3 +1,4 @@
+import { Md5 } from 'ts-md5'
 import {
     parseURL,
     withoutTrailingSlash,
@@ -17,7 +18,7 @@ import {
     validateWidthTolerance
 } from './validators'
 import type {
-    ClientOptions,
+    Client,
     SrcsetOptions
 } from './types'
 
@@ -96,7 +97,7 @@ export const sanitizePath = (path: string, isPathEncoding: boolean | undefined) 
     return withLeadingSlash(sanitizedPath)
 }
 
-export const sanitizeUrl = (url: ClientOptions['imgixUrl']) => {
+export const sanitizeUrl = (url: Client['url']) => {
     const { protocol, host, pathname } = parseURL(withoutTrailingSlash(url))
 
     if (!protocol || !host) {
@@ -104,4 +105,15 @@ export const sanitizeUrl = (url: ClientOptions['imgixUrl']) => {
     }
 
     return `${protocol}//${host}${pathname}`
+}
+
+export const signParams = (token: string | undefined, path: string, queryParams: string) => {
+    if (token) {
+        const signatureBase = token + path + queryParams
+        const signature = Md5.hashStr(signatureBase)
+
+        return `${queryParams.length > 0 ? '&s=' : '?s=' }${signature}`
+    }
+
+    return ''
 }
