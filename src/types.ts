@@ -23,7 +23,7 @@ export interface SrcsetOptions {
     maxWidth?: number  // max 8192
     devicePixelRatios?: DevicePixelRatio[]
     variableQualities?: VariableQualities
-    isVariableQuality?: boolean
+    useVariableQuality?: boolean
 }
 
 

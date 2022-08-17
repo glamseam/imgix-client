@@ -71,9 +71,9 @@ export const getSrcsetWidths = (srcsetOptions: SrcsetOptions | undefined) => {
     return genResolutions(minWidth, maxWidth, widthTolerance)
 }
 
-export const sanitizeIsVariableQuality = (isVariableQuality: SrcsetOptions['isVariableQuality']) => {
-    if (isVariableQuality && typeof isVariableQuality === 'boolean') {
-        return isVariableQuality
+export const sanitizeUseVariableQuality = (useVariableQuality: SrcsetOptions['useVariableQuality']) => {
+    if (useVariableQuality && typeof useVariableQuality === 'boolean') {
+        return useVariableQuality
     }
 
     return DEFAULT_IS_VARIABLE_QUALITY

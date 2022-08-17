@@ -5,7 +5,7 @@ import {
 } from './constants'
 import {
     getSrcsetWidths,
-    sanitizeIsVariableQuality,
+    sanitizeUseVariableQuality,
     sanitizePath,
     sanitizeUrl,
     signParams
@@ -152,7 +152,7 @@ export const buildSrcsetDpr = (
     const targetRatios = srcsetOptions?.devicePixelRatios ?? DEFAULT_DPRS
     validateDevicePixelRatios(targetRatios)
 
-    const isVariableQuality = sanitizeIsVariableQuality(srcsetOptions?.isVariableQuality)
+    const useVariableQuality = sanitizeUseVariableQuality(srcsetOptions?.useVariableQuality)
 
     if (srcsetOptions?.variableQualities) {
         validateVariableQualities(srcsetOptions.variableQualities)
@@ -166,7 +166,7 @@ export const buildSrcsetDpr = (
             imgPath,
             {
                 dpr,
-                q: isVariableQuality ? qualities[dpr] : undefined,
+                q: useVariableQuality ? qualities[dpr] : undefined,
                 ...imgixParams
             },
             isPathEncoding
