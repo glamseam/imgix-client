@@ -17,8 +17,25 @@ import {
 import type {
     Client,
     ImgixParams,
+    ImgixTextParams,
     SrcsetOptions
 } from './types'
+
+export const buildText = (
+    text: string,
+    client: Client,
+    imgixTextParams?: ImgixTextParams
+) => {
+    const url = sanitizeUrl(client.url)
+    const path = '/~text'
+    const params = buildParams({
+        ...imgixTextParams,
+        txt64: text
+    })
+    const signedParams = signParams(client.secureUrlToken, path, params)
+
+    return `${url}${path}${params}${signedParams}`
+}
 
 export const buildUrl = (
     client: Client,
@@ -108,7 +125,7 @@ export const buildParams = (imgixParams: ImgixParams | undefined) => {
                 const encodedKey = encodeURIComponent(key)
                 const encodedValue =
                     key.slice(-2) === '64'
-                        ? Base64.encodeURI(arrayToString(imgixParams[key]))
+                        ? toBase64Url(arrayToString(imgixParams[key]))
                         : encodeURIComponent(arrayToString(imgixParams[key]))
 
                 queryParams.push(`${encodedKey}=${encodedValue}`)
@@ -174,4 +191,8 @@ export const buildSrcsetDpr = (
     )
 
     return srcset.join(',\n')
+}
+
+export const toBase64Url = (str: string) => {
+    return Base64.encodeURI(str)
 }
