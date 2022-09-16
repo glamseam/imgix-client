@@ -80,21 +80,21 @@ export const sanitizeUseVariableQuality = (useVariableQuality: SrcsetOptions['us
 }
 
 export const sanitizePath = (path: string, isPathEncoding: boolean | undefined) => {
-    const sanitizedPath = withoutLeadingSlash(path)
+    const sanitizedPath = withLeadingSlash(path)
 
-    if (isPathEncoding) {
-        if (/^https?:\/\//.test(sanitizedPath)) {
-            // Use de/encodeURIComponent to ensure *all* characters are handled,
-            // since it's being used as a path
-            return withLeadingSlash(encodeURIComponent(sanitizedPath))
-        } else {
-            // Use de/encodeURI if we think the path is just a path,
-            // so it leaves legal characters like '/' and '@' alone
-            return withLeadingSlash(encodeURI(sanitizedPath).replace(/[#?:+]/g, encodeURIComponent))
-        }
+    if (!isPathEncoding) {
+        return sanitizedPath
     }
 
-    return withLeadingSlash(sanitizedPath)
+    if (/^https?:\/\//.test(sanitizedPath)) {
+        // Use de/encodeURIComponent to ensure *all* characters are handled,
+        // since it's being used as a path
+        return encodeURIComponent(sanitizedPath)
+    }
+
+    // Use de/encodeURI if we think the path is just a path,
+    // so it leaves legal characters like '/' and '@' alone
+    return encodeURI(sanitizedPath).replace(/[#?:+]/g, encodeURIComponent)
 }
 
 export const sanitizeUrl = (url: Client['url']) => {
