@@ -243,7 +243,6 @@ interface TrimParams {
 interface TypesettingEndpointParams {
     'txt-lead'?: number  // default: 0
     'txt-track'?: number  // default: 0
-    '~text'?: string  // ??
 }
 
 interface WatermarkParams {
@@ -286,6 +285,11 @@ export type ImgixParams =
     TrimParams &
     TypesettingEndpointParams &
     WatermarkParams
+
+export type ImgixTextParams =
+    TextParams &
+    TypesettingEndpointParams &
+    SecureParams
 
 export interface AttributeConfig {
     src: string
