@@ -2,8 +2,7 @@ import { Md5 } from '@d-gs/md5'
 import {
     parseURL,
     withoutTrailingSlash,
-    withLeadingSlash,
-    withoutLeadingSlash
+    withLeadingSlash
 } from 'ufo'
 import {
     DEFAULT_MIN_SRCSET_WIDTH,
