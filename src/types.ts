@@ -289,7 +289,8 @@ export type ImgixParams =
 export type ImgixTextParams =
     TextParams &
     TypesettingEndpointParams &
-    SecureParams
+    SecureParams &
+    SizeParams
 
 export interface AttributeConfig {
     src: string
